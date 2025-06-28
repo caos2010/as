@@ -47,7 +47,11 @@ if uploaded_file:
         col1, col2, col3 = st.columns(3)
         col1.metric("🎯 Độ Chính Xác", f"{accuracy_score(y_test, y_pred):.2f}")
         col2.metric("✅ F1 Score", f"{f1_score(y_test, y_pred):.2f}")
-        col3.metric("📌 AUC", f"{roc_auc_score(y_test, grid.predict_proba(X_test)[:,1]):.2f}")
+        auc = roc_auc_score(y_test, grid.predict_proba(X_test)[:,1]) if hasattr(grid, 'predict_proba') else None
+        if auc is not None:
+            col3.metric("📌 AUC", f"{auc:.2f}")
+        else:
+            col3.warning("🔍 AUC không tính được")
 
         with st.expander("📑 Tham Số Mô Hình"):
             st.json(grid.best_params_)
